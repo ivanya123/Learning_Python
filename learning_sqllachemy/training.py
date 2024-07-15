@@ -1,12 +1,14 @@
-from sqlalchemy import create_engine, text, Table, Column, Integer, String, ForeignKey, insert
+# -*- coding: utf-8 -*-
+from sqlalchemy import create_engine, text, Table, Column, Integer, String, ForeignKey, insert, select, and_, \
+    UniqueConstraint
 import psycopg2
 from sqlalchemy.orm import Session, DeclarativeBase, Mapped, mapped_column, relationship
 from typing import List, Optional
 from sqlalchemy import MetaData
-
-engine = create_engine('postgresql+psycopg2://postgres:112233@localhost:5432/Picture_bot', echo=True)
-metadata = MetaData()
 import json
+
+engine = create_engine('postgresql+psycopg2://postgres:112233@localhost:5432/Picture', echo=True)
+metadata = MetaData()
 
 
 # with engine.connect() as conn:
@@ -76,6 +78,8 @@ class Base(DeclarativeBase):
     pass
 
 
+#
+#
 class Picture(Base):
     __tablename__ = "pictures"
 
@@ -86,7 +90,11 @@ class Picture(Base):
     canvas_height_and_width: Mapped[str] = mapped_column(String(30), nullable=False)
     price: Mapped[int] = mapped_column(Integer, nullable=False)
 
-    buyers: Mapped[List["Buyer"]] = relationship(back_populates="picture")
+    buyer: Mapped[List["Buyer"]] = relationship(back_populates="picture")
+
+    __table_args__ = (
+        UniqueConstraint('canvas_shape', 'canvas_base', 'canvas_size', 'canvas_height_and_width',
+                         name='_canvas_unique'),)
 
 
 class Buyer(Base):
@@ -99,9 +107,11 @@ class Buyer(Base):
     picture: Mapped[Picture] = relationship(back_populates="buyer")
 
 
-# Base.metadata.create_all(engine)
+#
+Base.metadata.create_all(engine)
 
-users = Table("users", metadata, autoload_with=engine)
+
+# users = Table("users", metadata, autoload_with=engine)
 
 # stmt = insert(users).values(username="king", password="admin")
 # compiled = stmt.compile()
@@ -119,13 +129,36 @@ def add_picture(canvas_shape: str, canvas_base: str, canvas_size: str, canvas_he
         session.commit()
 
 
-with open("info.json", 'r') as f:
-    data = json.load(f)
+# with open("info.json", 'r') as f:
+#     data = json.load(f)
+#
+#
+# for shape in data:
+#     for base in data[shape]:
+#         for size in data[shape][base]:
+#             for height_and_width in data[shape][base][size]:
+#                 price = data[shape][base][size][height_and_width]
+#                 add_picture(shape, base, size, height_and_width, price)
 
 
-for shape in data:
-    for base in data[shape]:
-        for size in data[shape][base]:
-            for height_and_width in data[shape][base][size]:
-                price = data[shape][base][size][height_and_width]
-                add_picture(shape, base, size, height_and_width, price)
+scalar_sbq = (
+    select(Picture.id).where(and_(
+        Picture.canvas_shape == "Квадрат",
+        Picture.canvas_base == "На картоне",
+        Picture.canvas_size == "Большой",
+        Picture.canvas_height_and_width == "50x50")
+    ).scalar_subquery()
+)
+print('!!!!!!', scalar_sbq, '!!!!!!!!!!!')
+with Session(engine) as session:
+    stmt = insert(Buyer).values(picture_id=scalar_sbq, username="Stepan",
+                                chat_id="123456778")
+    session.execute(stmt)
+    session.commit()
+
+
+def add_buyer(username: str, chat_id: str, picture_id: int):
+    stmt = insert(Buyer).values(username=username, chat_id=chat_id, picture_id=picture_id)
+    with Session(engine) as session:
+        session.execute(stmt)
+        session.commit()
