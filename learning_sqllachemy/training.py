@@ -108,7 +108,7 @@ class Buyer(Base):
 
 
 #
-Base.metadata.create_all(engine)
+# Base.metadata.create_all(engine)
 
 
 # users = Table("users", metadata, autoload_with=engine)
@@ -149,12 +149,25 @@ scalar_sbq = (
         Picture.canvas_height_and_width == "50x50")
     ).scalar_subquery()
 )
-print('!!!!!!', scalar_sbq, '!!!!!!!!!!!')
+# print('!!!!!!', scalar_sbq, '!!!!!!!!!!!')
+# with Session(engine) as session:
+#     stmt = insert(Buyer).values(picture_id=scalar_sbq, username="Stepan",
+#                                 chat_id="123456778")
+#     session.execute(stmt)
+#     session.commit()
+
+v = select(Picture.id).where(
+    and_(
+        Picture.canvas_shape == "Квадрат",
+        Picture.canvas_base == "На картоне",
+        Picture.canvas_size == "Большой",
+        Picture.canvas_height_and_width == "50x50"
+    )
+)
 with Session(engine) as session:
-    stmt = insert(Buyer).values(picture_id=scalar_sbq, username="Stepan",
-                                chat_id="123456778")
-    session.execute(stmt)
-    session.commit()
+    result = session.execute(v)
+    for row in result:
+        print(row.id)
 
 
 def add_buyer(username: str, chat_id: str, picture_id: int):
