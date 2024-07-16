@@ -129,16 +129,16 @@ def add_picture(canvas_shape: str, canvas_base: str, canvas_size: str, canvas_he
         session.commit()
 
 
-# with open("info.json", 'r') as f:
-#     data = json.load(f)
-#
-#
-# for shape in data:
-#     for base in data[shape]:
-#         for size in data[shape][base]:
-#             for height_and_width in data[shape][base][size]:
-#                 price = data[shape][base][size][height_and_width]
-#                 add_picture(shape, base, size, height_and_width, price)
+with open("info.json", 'r') as f:
+    data = json.load(f)
+
+
+for shape in data:
+    for base in data[shape]:
+        for size in data[shape][base]:
+            for height_and_width in data[shape][base][size]:
+                price = data[shape][base][size][height_and_width]
+                add_picture(shape, base, size, height_and_width, price)
 
 
 scalar_sbq = (
