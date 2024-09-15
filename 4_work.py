@@ -17,8 +17,7 @@ def is_prime_or_composite(n):
         return True, divisors
 
 
-l = int(input('Начало диапазона(включительно): '))
-r = int(input('Конец диапазона(включительно): '))
+l, r = [int(i) for i in input().split()]
 
 count = 0
 for i in range(l, r + 1):
