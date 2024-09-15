@@ -37,5 +37,5 @@ def fibonacci_cache(n):
 
 
 if __name__ == '__main__':
-    print(fibonacci(10))
-    print(fibonacci_cache(33))
+    print(fibonacci(36))
+    print(fibonacci_cache(50))
