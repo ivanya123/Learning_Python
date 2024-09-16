@@ -1,7 +1,7 @@
 def main():
-    last_keyword = input('Последние символы ')
-    unique_chars= input('Уникальные символы ')
-    len_password = int(input('Длина пароля '))
+    last_keyword = input()
+    unique_chars= input()
+    len_password = int(input())
     for i in unique_chars:
         if i not in last_keyword:
             return -1

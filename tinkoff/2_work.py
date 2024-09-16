@@ -1,5 +1,5 @@
-days = int(input('Введите кол-во  дней '))
-journal_entry = input('Введите запись из журнала ')
+days = int(input())
+journal_entry = input()
 
 list_height = [int(i) for i in journal_entry.split() if i != '-1']
 flag = True

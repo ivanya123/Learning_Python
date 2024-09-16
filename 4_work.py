@@ -9,7 +9,7 @@ def get_divisors(n):
     return divisors
 
 
-def is_prime_or_composite(n):
+def function_prime_number(n):
     divisors = get_divisors(n)
     if len(divisors) == 2:
         return False, divisors
@@ -17,13 +17,13 @@ def is_prime_or_composite(n):
         return True, divisors
 
 
-l, r = [int(i) for i in input().split()]
+l, r = input().split()
 
 count = 0
-for i in range(l, r + 1):
-    bool_, divisors = is_prime_or_composite(i)
+for i in range(int(l), int(r) + 1):
+    bool_, divisors = function_prime_number(i)
     if bool_:
-        if not is_prime_or_composite(len(divisors))[0]:
+        if not function_prime_number(len(divisors))[0]:
             count += 1
 
 print(count)
